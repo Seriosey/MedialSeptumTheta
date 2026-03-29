@@ -75,6 +75,11 @@ class ModelParameters:
             g12=arr[0], g21=arr[1], Iext1=arr[2], Iext2=arr[3],
             Delta=arr[4], tau_d=arr[5], tau_r=arr[6], tau_f=arr[7], Uinc=arr[8]
         )
+
+    @classmethod
+    def from_dict(cls, d: dict) -> 'ModelParameters':
+        """Create parameters from dictionary."""
+        return cls(**d)
     
     @property
     def g_ratio(self) -> float:
