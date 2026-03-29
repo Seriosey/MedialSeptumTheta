@@ -18,7 +18,7 @@ def black_box(params):
 
     return mf_analysis.is_theta
 
-
+'''
 
 from SALib.analyze import morris
 from SALib.sample import morris as morris_sample
@@ -44,7 +44,7 @@ print("μ* (важность):", Si['mu_star'])
 print("σ  (нелинейность):", Si['sigma'])
 
 
-
+'''
 #!/usr/bin/env python3
 """
 ================================================================================
@@ -73,15 +73,15 @@ warnings.filterwarnings('ignore')
 
 CONFIG = {
     # Параметры модели
-    'param_names': ['p12', 'p21', 'Iext1', 'Iext2', 'Delta', 'tau_d', 'tau_r', 'tau_f', 'Uinc'],
+    'param_names': ['g12', 'g21', 'Iext1', 'Iext2', 'Delta', 'tau_d', 'tau_r', 'tau_f', 'Uinc'],
     
     # Границы параметров (настройте под вашу модель!)
     'param_bounds': {
-        'p12':   (0, 10000),    # Вес связи популяция 1 -> 2
-        'p21':   (0, 10000),    # Вес связи популяция 2 -> 1
+        'g12':   (0, 10000),    # Вес связи популяция 1 -> 2
+        'g21':   (0, 10000),    # Вес связи популяция 2 -> 1
         'Iext1': (0, 2000),     # Время депрессии синапса 1 (мс)
         'Iext2': (0, 2000),     # Время депрессии синапса 2 (мс)
-        'Delta': (1, 300)
+        'Delta': (1, 300),
         'tau_d': (0, 10),   # Время восстановления синапса 1 (мс)
         'tau_r': (100, 1000),   # Время восстановления синапса 2 (мс)
         'tau_f': (10, 100),     # Время фасилитации синапса 1 (мс)
@@ -145,7 +145,7 @@ def latin_hypercube_sampling(n_samples, param_bounds, seed=42):
 # ============================================================================
 
 def simulate_theta_rhythm(params):
-    model_params = ModelParameters.from_array(params)
+    model_params = ModelParameters.from_dict(params)
     network = ThetaRhythmNetwork(model_params)
     mf_results = network.simulate_meanfield(t_max=1600, dt=0.02) 
     transient = int(300 / 0.02)
@@ -172,7 +172,10 @@ def run_simulations(samples, verbose=True):
     start_time = time.time()
     
     for i, (idx, row) in enumerate(samples.iterrows()):
+        params = row
+        print(params)
         params = row.to_dict()
+        print(params)
         results[i] = simulate_theta_rhythm(params)
         
         if verbose and (i + 1) % 500 == 0:
@@ -514,7 +517,6 @@ def main():
     
     # 2. Запуск симуляций
     print("\n[2/5] Запуск симуляций...")
-    print("  ВНИМАНИЕ: Используется ЗАГЛУШКА! Замените simulate_theta_rhythm() на вашу модель!")
     y = run_simulations(samples)
     
     # Проверка достаточности данных
@@ -544,7 +546,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-# Результаты
-print("S₁  (главный эффект):", Si['S1'])
-print("Sᵀᵢ (полный эффект):", Si['ST'])
-print("S₂  (взаимодействия):", Si['S2'])  # матрица k×k
+
